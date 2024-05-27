@@ -9,7 +9,7 @@ from flask import jsonify
 @app_views.route('/status', strict_slashes=False)
 def status_route():
     """This endpoint returns the status of the API"""
-    return jsonify({"staus": "OK"})
+    return jsonify({"status": "OK"})
 
 
 @app_views.route('/stats', strict_slashes=False)
