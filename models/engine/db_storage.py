@@ -90,6 +90,6 @@ class DBStorage:
         objects = self.all(cls)
         count = 0
         for object in self.all(cls).values():
-            count+= 1
+            count += 1
         return count
         pass
