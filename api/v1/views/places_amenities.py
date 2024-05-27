@@ -1,35 +1,30 @@
 #!/usr/bin/python3
-"""
-    Manage the RESTfull API for places amenities
-"""
+"""This holds views for places amenities"""
 from flask import jsonify, abort, request
 from api.v1.views import app_views
 from models import storage
 from models.amenity import Amenity
-from models.base_model import BaseModel
-from models.city import City
 from models.place import Place
-from models.review import Review
-from models.state import State
-from models.user import User
+
 from os import getenv
+
 current_storage = getenv("HBNB_TYPE_STORAGE")
 
 
 @app_views.route("/places/<place_id>/amenities", strict_slashes=False,
                  methods=['GET'])
-def amenity_places(place_id):
-    """Display all the amenities by place"""
+def amenity_places_route(place_id):
+    """This endpoint lists all the amenities in a place"""
     place_by_id = storage.get(Place, place_id)
     if place_by_id is not None:
-        return jsonify([ame.to_dict() for ame in place_by_id.amenities])
+        return jsonify([amenity.to_dict() for amenity in place_by_id.amenities])
     abort(404)
 
 
 @app_views.route("/places/<place_id>/amenities/<amenity_id>",
                  strict_slashes=False, methods=['DELETE'])
-def delete_amenity_place_id(place_id, amenity_id):
-    """Delete the amenity in a place matched by id"""
+def delete_amenity_place_id_route(place_id, amenity_id):
+    """This endpoint deletes an amenity"""
     place_by_id = storage.get(Place, place_id)
     if place_by_id:
         amenity_by_id = storage.get(Amenity, amenity_id)
@@ -50,8 +45,8 @@ def delete_amenity_place_id(place_id, amenity_id):
 
 @app_views.route("/places/<place_id>/amenities/<amenity_id>",
                  strict_slashes=False, methods=['POST'])
-def post_amenity_place(place_id, amenity_id):
-    """Create a new amenity in a place"""
+def post_amenity_place_route(place_id, amenity_id):
+    """This endpoint creates an amenity"""
     place_by_id = storage.get(Place, place_id)
     amenity_by_id = storage.get(Amenity, amenity_id)
     if place_by_id is None or amenity_by_id is None:

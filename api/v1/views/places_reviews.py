@@ -1,23 +1,17 @@
 #!/usr/bin/python3
-"""
-    Manage the RESTfull API for places review
-"""
+"""This holds views for places reviews"""
 from flask import jsonify, abort, request
 from api.v1.views import app_views
 from models import storage
-from models.amenity import Amenity
-from models.base_model import BaseModel
-from models.city import City
 from models.place import Place
 from models.review import Review
-from models.state import State
 from models.user import User
 
 
 @app_views.route("/places/<place_id>/reviews", strict_slashes=False,
                  methods=['GET'])
-def review_places(place_id):
-    """Display all the reviews by place"""
+def review_places_route(place_id):
+    """This endpoint lists all the reveiew objects"""
     place_by_id = storage.get(Place, place_id)
     if place_by_id is not None:
         return jsonify([review.to_dict() for review in place_by_id.reviews])
@@ -26,8 +20,8 @@ def review_places(place_id):
 
 @app_views.route("/reviews/<review_id>", strict_slashes=False,
                  methods=['GET'])
-def get_review_id(review_id):
-    """Display the review matched by id"""
+def get_review_id_route(review_id):
+    """This endpoint lists a review object"""
     review_by_id = storage.get(Review, review_id)
     if review_by_id is not None:
         return jsonify(review_by_id.to_dict())
@@ -36,8 +30,8 @@ def get_review_id(review_id):
 
 @app_views.route("/reviews/<review_id>", strict_slashes=False,
                  methods=['DELETE'])
-def delete_review_id(review_id):
-    """Delete the review matched by id"""
+def delete_review_id_route(review_id):
+    """This endpoint deletes a review"""
     review_by_id = storage.get(Review, review_id)
     if review_by_id is not None:
         storage.delete(review_by_id)
@@ -48,8 +42,8 @@ def delete_review_id(review_id):
 
 @app_views.route("/places/<place_id>/reviews", strict_slashes=False,
                  methods=['POST'])
-def post_review(place_id):
-    """Create a new review in a place"""
+def post_review_route(place_id):
+    """This endpoint creates a review"""
     place_by_id = storage.get(Place, place_id)
     if place_by_id is None:
         abort(404)
@@ -74,8 +68,8 @@ def post_review(place_id):
 
 @app_views.route("/reviews/<review_id>", strict_slashes=False,
                  methods=['PUT'])
-def put_review_id(review_id):
-    """Update a review in database"""
+def put_review_id_route(review_id):
+    """This endpoint updates a review object"""
     json_req = request.get_json()
     if not json_req:
         abort(400, 'Not a JSON')

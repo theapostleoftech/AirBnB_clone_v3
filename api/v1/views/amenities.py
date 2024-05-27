@@ -1,30 +1,22 @@
 #!/usr/bin/python3
-"""
-    Manage the RESTfull API for amenities
-"""
+"""This holds views for the amenities objects"""
 from flask import jsonify, abort, request
 from api.v1.views import app_views
 from models import storage
 from models.amenity import Amenity
-from models.base_model import BaseModel
-from models.city import City
-from models.place import Place
-from models.review import Review
-from models.state import State
-from models.user import User
 
 
 @app_views.route("/amenities", strict_slashes=False,
                  methods=['GET'])
-def amenities():
-    """Display all the amenities"""
-    return jsonify([ame.to_dict() for ame in storage.all(Amenity).values()])
+def amenities_route():
+    """This lists all the amenities objects"""
+    return jsonify([amenity.to_dict() for amenity in storage.all(Amenity).values()])
 
 
 @app_views.route("/amenities/<amenity_id>", strict_slashes=False,
                  methods=['GET'])
-def get_amenity_id(amenity_id):
-    """Display the amenity matched by id"""
+def get_amenity_id_route(amenity_id):
+    """This ednpoint lists an amenity object"""
     amenity_by_id = storage.get(Amenity, amenity_id)
     if amenity_by_id is not None:
         return jsonify(amenity_by_id.to_dict())
@@ -33,8 +25,8 @@ def get_amenity_id(amenity_id):
 
 @app_views.route("/amenities/<amenity_id>", strict_slashes=False,
                  methods=['DELETE'])
-def delete_amenity_id(amenity_id):
-    """Delete the amenity matched by id"""
+def delete_amenity_id_route(amenity_id):
+    """This endpoint deletes the amenity object"""
     amenity_by_id = storage.get(Amenity, amenity_id)
     if amenity_by_id is not None:
         storage.delete(amenity_by_id)
@@ -45,8 +37,8 @@ def delete_amenity_id(amenity_id):
 
 @app_views.route("/amenities", strict_slashes=False,
                  methods=['POST'])
-def post_amenity():
-    """Create a new amenity"""
+def post_amenity_route():
+    """This endpoint creates a new amenity object"""
     json_req = request.get_json()
     if not json_req:
         abort(400, 'Not a JSON')
@@ -60,8 +52,8 @@ def post_amenity():
 
 @app_views.route("/amenities/<amenity_id>", strict_slashes=False,
                  methods=['PUT'])
-def put_amenity_id(amenity_id):
-    """Update a amenity in database"""
+def put_amenity_id_route(amenity_id):
+    """This endpoint update an amenity object"""
     json_req = request.get_json()
     if not json_req:
         abort(400, 'Not a JSON')

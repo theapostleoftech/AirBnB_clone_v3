@@ -1,23 +1,17 @@
 #!/usr/bin/python3
-"""
-    Manage the RESTfull API for places
-"""
+"""This holds views for places objects"""
 from flask import jsonify, abort, request
 from api.v1.views import app_views
 from models import storage
-from models.amenity import Amenity
-from models.base_model import BaseModel
 from models.city import City
 from models.place import Place
-from models.review import Review
-from models.state import State
 from models.user import User
 
 
 @app_views.route("/cities/<city_id>/places", strict_slashes=False,
                  methods=['GET'])
-def places_city(city_id):
-    """Display all the places by city"""
+def places_city_route(city_id):
+    """This endpoint lists all the places objects"""
     city_by_id = storage.get(City, city_id)
     if city_by_id is not None:
         return jsonify([place.to_dict() for place in city_by_id.places])
@@ -26,8 +20,8 @@ def places_city(city_id):
 
 @app_views.route("/places/<place_id>", strict_slashes=False,
                  methods=['GET'])
-def get_place_id(place_id):
-    """Display the place matched by id"""
+def get_place_id_route(place_id):
+    """This endpoint lists a place object"""
     place_by_id = storage.get(Place, place_id)
     if place_by_id is not None:
         return jsonify(place_by_id.to_dict())
@@ -36,8 +30,8 @@ def get_place_id(place_id):
 
 @app_views.route("/places/<place_id>", strict_slashes=False,
                  methods=['DELETE'])
-def delete_place_id(place_id):
-    """Delete the place matched by id"""
+def delete_place_id_route(place_id):
+    """This endpoint deletes a place object"""
     place_by_id = storage.get(Place, place_id)
     if place_by_id is not None:
         storage.delete(place_by_id)
@@ -48,8 +42,8 @@ def delete_place_id(place_id):
 
 @app_views.route("/cities/<city_id>/places", strict_slashes=False,
                  methods=['POST'])
-def post_place(city_id):
-    """Create a new place in a city"""
+def post_place_route(city_id):
+    """this endpoint creates a new place in a city object"""
     city_by_id = storage.get(City, city_id)
     if city_by_id is None:
         abort(404)
@@ -74,8 +68,8 @@ def post_place(city_id):
 
 @app_views.route("/places/<place_id>", strict_slashes=False,
                  methods=['PUT'])
-def put_place_id(place_id):
-    """Update a place in database"""
+def put_place_id_route(place_id):
+    """This endpoint updates a place object"""
     json_req = request.get_json()
     if not json_req:
         abort(400, 'Not a JSON')
