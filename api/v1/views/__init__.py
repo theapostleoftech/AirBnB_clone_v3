@@ -1,5 +1,5 @@
 from flask import Blueprint
-"""This holds te variable app_views and other view imports"""
+"""create a variable app_views which is an instance of Blueprint"""
 
 app_views = Blueprint('app_views', __name__, url_prefix='/api/v1/')
 

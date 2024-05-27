@@ -1,40 +1,46 @@
 #!/usr/bin/python3
-"""This handles the views for the place objects"""
+"""
+    Manage the RESTfull API for places
+"""
 from flask import jsonify, abort, request
 from api.v1.views import app_views
 from models import storage
+from models.amenity import Amenity
+from models.base_model import BaseModel
 from models.city import City
 from models.place import Place
+from models.review import Review
+from models.state import State
 from models.user import User
 
 
 @app_views.route("/cities/<city_id>/places", strict_slashes=False,
                  methods=['GET'])
-def retrieve_places_in_city_route(city_id):
-    """THis endpoint lists all places object in a city"""
-    city = storage.get(City, city_id)
-    if city is not None:
-        return jsonify([place.to_dict() for place in city.places])
+def places_city(city_id):
+    """Display all the places by city"""
+    city_by_id = storage.get(City, city_id)
+    if city_by_id is not None:
+        return jsonify([place.to_dict() for place in city_by_id.places])
     abort(404)
 
 
 @app_views.route("/places/<place_id>", strict_slashes=False,
                  methods=['GET'])
-def retrieve_place_route(place_id):
-    """This endpoint retrieves a place object"""
-    place = storage.get(Place, place_id)
-    if place is not None:
-        return jsonify(place.to_dict())
+def get_place_id(place_id):
+    """Display the place matched by id"""
+    place_by_id = storage.get(Place, place_id)
+    if place_by_id is not None:
+        return jsonify(place_by_id.to_dict())
     abort(404)
 
 
 @app_views.route("/places/<place_id>", strict_slashes=False,
                  methods=['DELETE'])
-def delete_place_route(place_id):
-    """This endpoint deletes a place object"""
-    place = storage.get(Place, place_id)
-    if place is not None:
-        storage.delete(place)
+def delete_place_id(place_id):
+    """Delete the place matched by id"""
+    place_by_id = storage.get(Place, place_id)
+    if place_by_id is not None:
+        storage.delete(place_by_id)
         storage.save()
         return jsonify({}), 200
     abort(404)
@@ -42,25 +48,25 @@ def delete_place_route(place_id):
 
 @app_views.route("/cities/<city_id>/places", strict_slashes=False,
                  methods=['POST'])
-def create_place_route(city_id):
+def post_place(city_id):
     """Create a new place in a city"""
-    city = storage.get(City, city_id)
-    if city is None:
+    city_by_id = storage.get(City, city_id)
+    if city_by_id is None:
         abort(404)
-    place_data = request.get_json()
-    if not place_data:
+    json_req = request.get_json()
+    if not json_req:
         abort(400, 'Not a JSON')
-    if 'user_id' not in place_data:
+    if 'user_id' not in json_req:
         abort(400, 'Missing user_id')
     user_id = request.get_json()["user_id"]
-    user = storage.get(User, user_id)
-    if user is None:
+    user_by_id = storage.get(User, user_id)
+    if user_by_id is None:
         abort(404)
     if 'name' not in request.get_json():
         abort(400, 'Missing name')
-    new_place = Place(**place_data())
+    new_place = Place(**request.get_json())
     new_place.city_id = city_id
-    new_place.user_id = user.id
+    new_place.user_id = user_by_id.id
     storage.new(new_place)
     storage.save()
     return jsonify(new_place.to_dict()), 201
@@ -68,19 +74,19 @@ def create_place_route(city_id):
 
 @app_views.route("/places/<place_id>", strict_slashes=False,
                  methods=['PUT'])
-def update_place_route(place_id):
-    """This endpoint updates a place object"""
-    place_data = request.get_json()
-    if not place_data:
+def put_place_id(place_id):
+    """Update a place in database"""
+    json_req = request.get_json()
+    if not json_req:
         abort(400, 'Not a JSON')
-    place = storage.get(Place, place_id)
-    if place is not None:
-        for attr, value in place_data().items():
-            if (hasattr(place, attr) and
+    place_by_id = storage.get(Place, place_id)
+    if place_by_id is not None:
+        for attr, value in request.get_json().items():
+            if (hasattr(place_by_id, attr) and
                     attr != 'id' and attr != 'created_at' and
                     attr != 'updated_at' and attr != 'user_id' and
                     attr != 'city_id'):
-                setattr(place, attr, value)
+                setattr(place_by_id, attr, value)
         storage.save()
-        return jsonify(place.to_dict()), 200
+        return jsonify(place_by_id.to_dict()), 200
     abort(404)
