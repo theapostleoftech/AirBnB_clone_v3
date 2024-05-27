@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 """This hold the variable app_views"""
 
 from flask import Blueprint
