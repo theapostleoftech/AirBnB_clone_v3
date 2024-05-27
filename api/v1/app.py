@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """Handles the views blueprint"""
 from flask import Flask, jsonify
+from os import getenv
 from models import storage
 from api.v1.views import app_views
 
@@ -22,4 +23,5 @@ def teardown_storage(exception):
 
 
 if '__name__' == '__main__':
-    app.run('0.0.0.0', port='5000', threaded=True)
+    app.run(host=getenv('HBNB_API_HOST', '0.0.0.0'),
+            port=getenv('HBNB_API_PORT', '5000'), threaded=True)

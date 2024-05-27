@@ -6,13 +6,21 @@ from models import storage
 from flask import jsonify
 
 
-@app_views.route('/status', methods=['GET'])
+@app_views.route('/status', strict_slashes=False)
 def status_route():
     """This endpoint returns the status of the API"""
     return jsonify({"staus": "OK"})
 
 
-@app_views.route('/stats', methods=['GET'], strict_slashes=False)
+@app_views.route('/stats', strict_slashes=False)
 def stats_route():
     """This endpoint retrieves the number of each objects by type"""
-    return storage.count()
+    objects = {
+        "amenities": storage.count('Amenity'),
+        "cities": storage.count('City'),
+        "places": storage.count('Place'),
+        "reviews": storage.count('Review'),
+        "states": storage.count('State'),
+        "users": storage.count('User')
+    }
+    return jsonify(objects)
